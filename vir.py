@@ -13,7 +13,10 @@ parent_path = os.getcwd()
 illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
 
 contest_url = 'https://codeforces.com/contest/'
-contest_id = '1216'
+contest_id = '1216' #ask-for-id
+# language = imput('What is the language of your choice?')
+extension = '.cpp'
+
 
 contest_url = contest_url + contest_id
 print(contest_url)
@@ -29,8 +32,44 @@ else:
 soup = BeautifulSoup(page.text, 'html.parser')
 # print(soup.prettify())
 
-def create_problem_folder(prob_no, prob_name):
-    print(prob_no,prob_name)
+
+
+contest_problem_url = 'https://codeforces.com/contest/{}/problem/'.format(contest_id)
+
+#Create problem folders - 3
+def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,extension,template_txt):
+    print(prob_no,prob_name, "\nExtracting ......")
+    contest_problem_url = contest_problem_url +  prob_no
+    print(contest_problem_url, "is being parsed .....")
+    print(folder_name)
+    
+    prob_folder_name = prob_no + " " + prob_name
+
+    for str_char in illegal:
+        prob_folder_name = prob_folder_name.replace(str_char," ")
+    prob_folder_name = os.path.join(folder_name, prob_folder_name)
+    os.mkdir(prob_folder_name)
+    print("Problem {} folder created".format(prob_no))
+
+    file1 = prob_no + extension
+    file1 = os.path.join(prob_folder_name,file1)
+    fname = open(file1,"a")
+    fname.write(template_txt)
+    fname.close()
+
+    file2 = prob_no + ".txt"
+    file2 = os.path.join(prob_folder_name,file2)
+    fname = open(file2, "a")
+    fname.write("Hello")
+    fname.close()
+
+    
+
+
+
+    # page = requests.get(contest_problem_url, verify = True)
+
+
 
 #Function to get the folder_name - 1
 def get_folder_name(contest_name):
@@ -108,6 +147,14 @@ folder_name = get_folder_name(contest_name)
 problems = soup.find('div', attrs={"class":"datatable"}).find('table').findAll('a')
 # c_table = contests.find('table')
 # lst = contests.findAll('tr')
+
+#template-parse
+fname = open('template.txt', "r")
+template_txt = fname.read().strip()
+fname.close()
+# print(template_txt)
+os.mkdir(folder_name)
+
 for i in range(len(problems)):
     # if i%3 != 0:continue
     #For every contest
@@ -115,7 +162,7 @@ for i in range(len(problems)):
     txt = problems[i].text.strip()
     prob_no = problems[i].text.strip()
     prob_name = problems[i+1].text.strip()
-    create_problem_folder(prob_no,prob_name)
+    create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt)
 
     
 
