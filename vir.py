@@ -8,6 +8,9 @@ import time
 import re
 from bs4 import BeautifulSoup
 
+parent_path = os.getcwd()
+illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
+
 contest_url = 'http://codeforces.com/contest/'
 contest_id = '1216'
 
@@ -25,50 +28,73 @@ else:
 soup = BeautifulSoup(page.text, 'html.parser')
 # print(soup.prettify())
 
+#Function to get the folder_name - 1
+def get_folder_name(contest_name):
+    folder_name = os.path.join(parent_path,contest_name)
+    for str_char in illegal:
+        folder_name = folder_name[0:10] + folder_name[10:].replace(str_char," ")
+    return folder_name
 
-#Function to make the stats.txt file
-def make_stats_file(stats_text):
-    print(stats_text)
+#Function to make the stats.txt file - 2A
+def make_stats_file(stats_text,folder_name):
+    # print(stats_text)
+    if os.path.exists(folder_name) == True:
+        folder_name = folder_name + " Virtual"
 
+    os.mkdir(folder_name)
+    print("\nFolder created for contest !!!!")
 
+    stats_file = os.path.join(folder_name,"stats.txt")
+    fname = open(stats_file, "a")
+    fname.write(stats_text)
+    fname.close()
+    print("Stats.txt created. Sleeping for 5 seconds :)")
+    time.sleep(5)
 
+#Function to extract the standing row - 2
+def standings_row_extraction(contest_name, folder_name):
+    #First extract the stats of the contest from the standings page
+    page_stats = requests.get(contest_url + '/standings')
+    # print(page_stats)
+    if(page_stats.status_code != 200):
+        print("Failed to retrive stats for contest {}!!!!".format(contest_id))
+    else:
+        print("Stats for contest {} are being retrieved !!!".format(contest_id))
+    soup_stats = BeautifulSoup(page_stats.text, 'html.parser')
+    acc_tried = soup_stats.find('table')
 
-#First extract the stats of the contest from the standings page
-page_stats = requests.get(contest_url + '/standings')
-# print(page_stats)
-if(page_stats.status_code != 200):
-    print("Failed to retrive stats for contest {}!!!!".format(contest_id))
-else:
-    print("Stats for contest {} are being retrieved !!!".format(contest_id))
-soup_stats = BeautifulSoup(page_stats.text, 'html.parser')
-acc_tried = soup_stats.find('table')
+    acc_tried_notice = acc_tried.findAll('span', attrs={"class": "notice"})
+    acc_tried_AC = acc_tried.findAll('span', attrs={"class": "cell-passed-system-test cell-accepted"})
+    print("Standings row for stats captured!!!")
+    # print(len(acc_tried_notice))
+    # print(len(acc_tried_AC))
+    stats_text = "AC Stats: \n"
+    for i in range(len(acc_tried_AC)):
+        if i==0:continue
+        
+        ac_num = acc_tried_AC[i].text
+        try_num = acc_tried_notice[i].text
+        per = (int(ac_num) / int(try_num)) * 100.00
+        per = round(per,2)
 
-acc_tried_notice = acc_tried.findAll('span', attrs={"class": "notice"})
-acc_tried_AC = acc_tried.findAll('span', attrs={"class": "cell-passed-system-test cell-accepted"})
-print("Standings row for stats captured!!!")
-# print(len(acc_tried_notice))
-# print(len(acc_tried_AC))
-stats_text = "AC Stats: \n"
-for i in range(len(acc_tried_AC)):
-    if i==0:continue
+        temp_text = "\nProblem {} - Accepted: {} Tried: {} Success: {}%".format(i,ac_num,try_num,per)
+        # print(temp_text)
+        stats_text = stats_text + temp_text
+    make_stats_file(stats_text, folder_name)
     
-    ac_num = acc_tried_AC[i].text
-    try_num = acc_tried_notice[i].text
-    per = (int(ac_num) / int(try_num)) * 100.00
-    per = round(per,2)
-
-    temp_text = "\nProblem {} - Accepted: {} Tried: {} Success: {}%".format(i,ac_num,try_num,per)
-    # print(temp_text)
-    stats_text = stats_text + temp_text
-
-# make_stats_file(stats_text)
-
-
+##############MAIN##############
 #Extract the contest-details
 # print(soup.prettify())
 tables = soup.findAll('table')
-print(tables)
+# print(tables)
+# print(len(tables)) - 6
+# print(tables[0].find('a').text)
+contest_name = tables[0].find('a').text.strip()
+print(contest_name)
 
-
+#universal folder name
+folder_name = get_folder_name(contest_name)
+# print(folder_name)
+standings_row_extraction(contest_name,folder_name)
 
 
