@@ -20,11 +20,17 @@ if(page.status_code != 200):
     exit(1)
 else:
     print("Contest page parsing has started !!!!")
-
 # print(page.text)
 # Note- page.text contains the html or the page source
 soup = BeautifulSoup(page.text, 'html.parser')
 # print(soup.prettify())
+
+
+#Function to make the stats.txt file
+def make_stats_file(stats_text):
+    print(stats_text)
+
+
 
 
 #First extract the stats of the contest from the standings page
@@ -38,11 +44,14 @@ else:
 soup_stats = BeautifulSoup(page_stats.text, 'html.parser')
 acc_tried = soup_stats.find('table')
 
+
 acc_tried_notice = acc_tried.findAll('span', attrs={"class": "notice"})
 acc_tried_AC = acc_tried.findAll('span', attrs={"class": "cell-passed-system-test cell-accepted"})
+print("Standings row for stats captured!!!")
 # print(len(acc_tried_notice))
 # print(len(acc_tried_AC))
 stats_text = "AC Stats: \n"
+
 for i in range(len(acc_tried_AC)):
     if i==0:continue
     
@@ -51,8 +60,11 @@ for i in range(len(acc_tried_AC)):
     per = (int(ac_num) / int(try_num)) * 100.00
     per = round(per,2)
 
-    temp_text = "Problem {} - Accepted: {} Tried: {} Success: {}%".format(i,ac_num,try_num,per)
-    print(temp_text)
+    temp_text = "\nProblem {} - Accepted: {} Tried: {} Success: {}%".format(i,ac_num,try_num,per)
+    # print(temp_text)
+    stats_text = stats_text + temp_text
+
+make_stats_file(stats_text)
 
 
 
