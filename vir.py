@@ -40,10 +40,8 @@ if(page_stats.status_code != 200):
     print("Failed to retrive stats for contest {}!!!!".format(contest_id))
 else:
     print("Stats for contest {} are being retrieved !!!".format(contest_id))
-
 soup_stats = BeautifulSoup(page_stats.text, 'html.parser')
 acc_tried = soup_stats.find('table')
-
 
 acc_tried_notice = acc_tried.findAll('span', attrs={"class": "notice"})
 acc_tried_AC = acc_tried.findAll('span', attrs={"class": "cell-passed-system-test cell-accepted"})
@@ -51,7 +49,6 @@ print("Standings row for stats captured!!!")
 # print(len(acc_tried_notice))
 # print(len(acc_tried_AC))
 stats_text = "AC Stats: \n"
-
 for i in range(len(acc_tried_AC)):
     if i==0:continue
     
@@ -64,10 +61,13 @@ for i in range(len(acc_tried_AC)):
     # print(temp_text)
     stats_text = stats_text + temp_text
 
-make_stats_file(stats_text)
+# make_stats_file(stats_text)
 
 
-
+#Extract the contest-details
+# print(soup.prettify())
+tables = soup.findAll('table')
+print(tables)
 
 
 
