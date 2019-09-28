@@ -6,17 +6,18 @@ import sys
 import requests
 import time
 import re
+import ssl
 from bs4 import BeautifulSoup
 
 parent_path = os.getcwd()
 illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
 
-contest_url = 'http://codeforces.com/contest/'
+contest_url = 'https://codeforces.com/contest/'
 contest_id = '1216'
 
 contest_url = contest_url + contest_id
 print(contest_url)
-page = requests.get(contest_url)
+page = requests.get(contest_url, verify = True)
 # print(page.status_code)
 if(page.status_code != 200):
     print("Failed to retrive contest {}!!!!".format(contest_id))
@@ -40,6 +41,9 @@ def make_stats_file(stats_text,folder_name):
     # print(stats_text)
     if os.path.exists(folder_name) == True:
         folder_name = folder_name + " Virtual"
+        if os.path.exists(folder_name) == True:
+            print("Participated + Upsolved!!! Relax Now. ")
+            exit(0)
 
     os.mkdir(folder_name)
     print("\nFolder created for contest !!!!")
@@ -54,7 +58,7 @@ def make_stats_file(stats_text,folder_name):
 #Function to extract the standing row - 2
 def standings_row_extraction(contest_name, folder_name):
     #First extract the stats of the contest from the standings page
-    page_stats = requests.get(contest_url + '/standings')
+    page_stats = requests.get(contest_url + '/standings' , verify = True)
     # print(page_stats)
     if(page_stats.status_code != 200):
         print("Failed to retrive stats for contest {}!!!!".format(contest_id))
