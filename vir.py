@@ -29,6 +29,9 @@ else:
 soup = BeautifulSoup(page.text, 'html.parser')
 # print(soup.prettify())
 
+def create_problem_folder(prob_no, prob_name):
+    print(prob_no,prob_name)
+
 #Function to get the folder_name - 1
 def get_folder_name(contest_name):
     folder_name = os.path.join(parent_path,contest_name)
@@ -98,7 +101,22 @@ print(contest_name)
 
 #universal folder name
 folder_name = get_folder_name(contest_name)
-# print(folder_name)
-standings_row_extraction(contest_name,folder_name)
+
+# standings_row_extraction(contest_name,folder_name)
+
+#extract the datatable 
+problems = soup.find('div', attrs={"class":"datatable"}).find('table').findAll('a')
+# c_table = contests.find('table')
+# lst = contests.findAll('tr')
+for i in range(len(problems)):
+    # if i%3 != 0:continue
+    #For every contest
+    if i%4 !=0 : continue
+    txt = problems[i].text.strip()
+    prob_no = problems[i].text.strip()
+    prob_name = problems[i+1].text.strip()
+    create_problem_folder(prob_no,prob_name)
+
+    
 
 
