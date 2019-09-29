@@ -155,18 +155,24 @@ def standings_row_extraction(contest_name, folder_name):
     acc_tried = soup_stats.find('table')
 
     acc_tried_notice = acc_tried.findAll('span', attrs={"class": "notice"})
-    acc_tried_AC = acc_tried.findAll('span', attrs={"class": "cell-passed-system-test cell-accepted"})
+    acc_tried_AC = acc_tried.findAll('span', attrs={"class": "cell-passed-system-test"})
+    # acc_tried_AC = soup.select('td.smaller.bottom.dark')
     print("Standings row for stats captured!!!")
     # print(len(acc_tried_notice))
-    # print(len(acc_tried_AC))
+    x = len(acc_tried_notice)
+    acc_tried_AC = acc_tried_AC[-x:] #extract last n rows
+    
     stats_text = "AC Stats: \n"
     for i in range(len(acc_tried_AC)):
         if i==0:continue
         
         ac_num = acc_tried_AC[i].text
         try_num = acc_tried_notice[i].text
-        per = (int(ac_num) / int(try_num)) * 100.00
-        per = round(per,2)
+        if int(try_num) == 0:
+            per = 0
+        else:
+            per = (int(ac_num) / int(try_num)) * 100.00
+            per = round(per,2)
 
         temp_text = "\nProblem {} - Accepted: {} Tried: {} Success: {}%".format(i,ac_num,try_num,per)
         # print(temp_text)
@@ -214,7 +220,7 @@ for i in range(len(problems)):
     txt = problems[i].text.strip()
     prob_no = problems[i].text.strip()
     prob_name = problems[i+1].text.strip()
-    create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
+    # create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
 
 
 standings_row_extraction(contest_name,folder_name)
