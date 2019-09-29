@@ -7,6 +7,7 @@ import time
 import re
 import ssl
 from bs4 import BeautifulSoup
+from matplotlib import pyplot as plt
 
 parent_path = os.getcwd()
 illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
@@ -43,6 +44,14 @@ soup = BeautifulSoup(page.text, 'html.parser') #page.text contains the html or t
 
 contest_problem_url = 'https://codeforces.com/contest/{}/problem/'.format(contest_id)
 
+#get the png plot
+def get_matplotlib_png(prob_x, acc_y,folder_name):
+    plt.plot(prob_x,acc_y, color='r', marker='o')
+    plt.title('Problem VS Acceptance Rate')
+    plt.xlabel('Problem')
+    plt.ylabel('Acceptance')
+    pic_path = os.path.join(folder_name,"stats.png")
+    plt.savefig(pic_path)
 
 # Extract i/o statements for the problem -4
 def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id):
@@ -108,8 +117,6 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     time.sleep(5)
 
 
-
-
 #Function to get the folder_name - 1
 def get_folder_name(contest_name):
     folder_name = os.path.join(parent_path,contest_name)
@@ -118,16 +125,17 @@ def get_folder_name(contest_name):
     return folder_name
 
 #Function to make the stats.txt file - 2A
-def make_stats_file(stats_text,folder_name):
+def make_stats_file(stats_text,folder_name,prob_x, acc_y):
     stats_file = os.path.join(folder_name,"stats.txt")
     fname = open(stats_file, "a")
     fname.write(stats_text)
     fname.close()
-    print("Stats.txt created.")
+    print("Stats.txt created.\n Graph is being plotted !!!")
+    get_matplotlib_png(prob_x, acc_y,folder_name)
     print("\n\n-----The end---------")
 
 #Function to extract the standing row - 2
-def standings_row_extraction(contest_name, folder_name):
+def standings_row_extraction(contest_name, folder_name,prob_x):
     #First extract the stats of the contest from the standings page
     page_stats = requests.get(contest_url + '/standings' , verify = True)
     # print(page_stats)
@@ -146,6 +154,9 @@ def standings_row_extraction(contest_name, folder_name):
     x = len(acc_tried_notice)
     acc_tried_AC = acc_tried_AC[-x:] #extract last n rows
     
+    
+    acc_y=[]
+
     stats_text = "AC Stats: \n"
     for i in range(len(acc_tried_AC)):
         if i==0:continue
@@ -159,8 +170,9 @@ def standings_row_extraction(contest_name, folder_name):
             per = round(per,2)
 
         temp_text = "\nProblem {} - Accepted: {} Tried: {} Success: {}%".format(i,ac_num,try_num,per)
+        acc_y.append(per)
         stats_text = stats_text + temp_text
-    make_stats_file(stats_text, folder_name)
+    make_stats_file(stats_text, folder_name,prob_x,acc_y)
     
 
 #---------------MAIN----------------------#
@@ -185,6 +197,7 @@ os.mkdir(folder_name)
 
 print("\n\nThe problems will be parsed. Hold your horses for 3 secs!!!!")
 time.sleep(3)
+prob_x = [] #list of problems
 
 for i in range(len(problems)):
     #For every contest
@@ -192,8 +205,9 @@ for i in range(len(problems)):
     txt = problems[i].text.strip()
     prob_no = problems[i].text.strip()
     prob_name = problems[i+1].text.strip()
-    create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
+    prob_x.append(prob_no)
+    # create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
 
 #Get the stats-txt file
-standings_row_extraction(contest_name,folder_name)
+standings_row_extraction(contest_name,folder_name,prob_x)
 
