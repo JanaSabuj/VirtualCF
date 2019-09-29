@@ -39,12 +39,14 @@ A Codeforces parser for a specific contest identified by **contest-id**. Can be 
 > #include <iostream>
 > using namespace std;
 
-> int main() {
->	// your code goes here
->	freopen("input.txt", "r" , stdin);
->	return 0;
-> }
-
+```
+ int main() {
+	// your code goes here
+	freopen("input.txt", "r" , stdin);
+	return 0;
+ }
+ 
+```
 # The highlighted part is the contest-id
 ![1](https://user-images.githubusercontent.com/39147514/65833821-08da5480-e2f2-11e9-8180-ffd731417d9a.png)
 
