@@ -1,7 +1,7 @@
 # VirtualCF
 A Codeforces parser for a specific contest identified by **contest-id**. Can be used for uninterrupted and smooth participation in a virtual contest, upsolving a practice contest or even a live contest.
 
-> **Inspiration** 
+**Inspiration** 
 > Python is the "most powerful language you can still read".
 
 # What it does
