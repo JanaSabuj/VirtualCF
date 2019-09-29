@@ -31,7 +31,6 @@ contest_url = 'https://codeforces.com/contest/'
 contest_id =  input('Enter the contest id: ') #ask-for-id
 extension = get_extension() #ask-for-lang and get-ext
 
-
 contest_url = contest_url + contest_id
 print(contest_url)
 page = requests.get(contest_url, verify = True)
@@ -42,13 +41,10 @@ else:
     print("Contest page parsing has started !!!!")
 soup = BeautifulSoup(page.text, 'html.parser') #page.text contains the html or the page source
 
-
-
-
 contest_problem_url = 'https://codeforces.com/contest/{}/problem/'.format(contest_id)
 
 
-# 4
+# Extract i/o statements for the problem -4
 def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id):
     file2 = prob_no + ".txt"
     file2 = os.path.join(prob_folder_name,file2)
@@ -74,14 +70,7 @@ def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contes
     # print(txt)
     fname.write("\nI/O statements for {} {} \n".format(prob_no,prob_name))
     fname.write(txt)
-    fname.close()
-
-
-
-
-
-    
-
+    fname.close()    
 
 #Create problem folders - 3
 def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id):
@@ -98,9 +87,6 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     os.mkdir(prob_folder_name)
     print("Problem {} folder created".format(prob_no))
 
-
-    
-
     file1 = prob_no + extension
     file1 = os.path.join(prob_folder_name,file1)
     fname = open(file1,"a")
@@ -111,7 +97,6 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     time.sleep(3)
     get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id)
     print("I/O extraction a Success !")
-    # page = requests.get(contest_problem_url, verify = True)
 
     #create the input.txt file for personal input output
     file3 = "input.txt"
@@ -155,9 +140,9 @@ def standings_row_extraction(contest_name, folder_name):
 
     acc_tried_notice = acc_tried.findAll('span', attrs={"class": "notice"})
     acc_tried_AC = acc_tried.findAll('span', attrs={"class": "cell-passed-system-test"})
-    # acc_tried_AC = soup.select('td.smaller.bottom.dark')
+    
     print("Standings row for stats captured!!!")
-    # print(len(acc_tried_notice))
+    
     x = len(acc_tried_notice)
     acc_tried_AC = acc_tried_AC[-x:] #extract last n rows
     
@@ -174,32 +159,21 @@ def standings_row_extraction(contest_name, folder_name):
             per = round(per,2)
 
         temp_text = "\nProblem {} - Accepted: {} Tried: {} Success: {}%".format(i,ac_num,try_num,per)
-        # print(temp_text)
         stats_text = stats_text + temp_text
     make_stats_file(stats_text, folder_name)
     
 
-
-
 #---------------MAIN----------------------#
 #Extract the contest-details
 tables = soup.findAll('table')
-# print(tables)
-# print(len(tables)) - 6
-# print(tables[0].find('a').text)
 contest_name = tables[0].find('a').text.strip()
 print(contest_name)
 
 #universal folder name
 folder_name = get_folder_name(contest_name)
 
-# standings_row_extraction(contest_name,folder_name)
-
 #extract the datatable 
 problems = soup.find('div', attrs={"class":"datatable"}).find('table').findAll('a')
-# c_table = contests.find('table')
-# lst = contests.findAll('tr')
-
 
 #template-parse
 fname = open('template.txt', "r")
@@ -209,13 +183,10 @@ fname.close()
 #create the problem folder
 os.mkdir(folder_name)
 
-
 print("\n\nThe problems will be parsed. Hold your horses for 3 secs!!!!")
 time.sleep(3)
 
-
 for i in range(len(problems)):
-    # if i%3 != 0:continue
     #For every contest
     if i%4 !=0 : continue
     txt = problems[i].text.strip()
@@ -223,10 +194,6 @@ for i in range(len(problems)):
     prob_name = problems[i+1].text.strip()
     create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
 
-
+#Get the stats-txt file
 standings_row_extraction(contest_name,folder_name)
-
-
-    
-
 
