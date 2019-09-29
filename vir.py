@@ -12,10 +12,26 @@ from bs4 import BeautifulSoup
 parent_path = os.getcwd()
 illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
 
+def get_extension():
+    language = input('What is the language of your choice? \n1-C++ \n2-C \n3-Python \n4-Java \n5-Kotlin \n6-Javascript \n7-PHP \n8-Ruby \nEnter your choice: ')
+    hash = {
+        1 : '.cpp',
+        2 : '.c',
+        3 : '.py',
+        4 : '.java',
+        5 : '.kt',
+        6 : '.js',
+        7 : '.php',
+        8 : '.rb'
+    }
+    return hash[int(language)]
+    
+
 contest_url = 'https://codeforces.com/contest/'
-contest_id = '1216' #ask-for-id
-# language = imput('What is the language of your choice?')
-extension = '.cpp'
+contest_id =  input('Enter the contest id: ') #ask-for-id
+
+extension = get_extension()
+
 
 
 contest_url = contest_url + contest_id
@@ -51,6 +67,9 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     os.mkdir(prob_folder_name)
     print("Problem {} folder created".format(prob_no))
 
+
+    time.sleep(5)
+
     file1 = prob_no + extension
     file1 = os.path.join(prob_folder_name,file1)
     fname = open(file1,"a")
@@ -80,16 +99,6 @@ def get_folder_name(contest_name):
 
 #Function to make the stats.txt file - 2A
 def make_stats_file(stats_text,folder_name):
-    # print(stats_text)
-    if os.path.exists(folder_name) == True:
-        folder_name = folder_name + " Virtual"
-        if os.path.exists(folder_name) == True:
-            print("Participated + Upsolved!!! Relax Now. ")
-            exit(0)
-
-    os.mkdir(folder_name)
-    print("\nFolder created for contest !!!!")
-
     stats_file = os.path.join(folder_name,"stats.txt")
     fname = open(stats_file, "a")
     fname.write(stats_text)
@@ -148,12 +157,19 @@ problems = soup.find('div', attrs={"class":"datatable"}).find('table').findAll('
 # c_table = contests.find('table')
 # lst = contests.findAll('tr')
 
+
 #template-parse
 fname = open('template.txt', "r")
 template_txt = fname.read().strip()
 fname.close()
-# print(template_txt)
+
+#create the problem folder
 os.mkdir(folder_name)
+
+
+print("\n\n The problems will be parsed. Hold your horses for 3 secs!!!!")
+time.sleep(3)
+
 
 for i in range(len(problems)):
     # if i%3 != 0:continue
@@ -163,6 +179,10 @@ for i in range(len(problems)):
     prob_no = problems[i].text.strip()
     prob_name = problems[i+1].text.strip()
     create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt)
+
+
+standings_row_extraction(contest_name,folder_name)
+
 
     
 
