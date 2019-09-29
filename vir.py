@@ -1,6 +1,5 @@
 # Built by greenindia - Sabuj Jana - Jadavpur University 
 # www.janasabuj.github.io
-
 import os
 import sys
 import requests
@@ -52,8 +51,44 @@ soup = BeautifulSoup(page.text, 'html.parser')
 
 contest_problem_url = 'https://codeforces.com/contest/{}/problem/'.format(contest_id)
 
+
+# 4
+def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id):
+    file2 = prob_no + ".txt"
+    file2 = os.path.join(prob_folder_name,file2)
+    fname = open(file2, "a")
+    fname.write("I/O statements for {} {} \n".format(prob_no,prob_name))
+    # fname.close()
+    url = 'https://codeforces.com/contest/{}/problem/{}'.format(contest_id,prob_no)
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, 'html.parser')
+    
+
+    inp = soup.findAll('div', attrs={"class" : "input"})
+    # print(inp)
+
+    out = soup.findAll('div', attrs={"class" : "output"})
+    # print(out)
+
+    txt = ""
+    for i in range(len(inp)):
+        x = inp[i].text
+        y = out[i].text
+        txt = txt + "\n" + x + "\n" + y
+
+    # print(txt)
+    fname.write(txt)
+    fname.close()
+
+
+
+
+
+    
+
+
 #Create problem folders - 3
-def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,extension,template_txt):
+def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id):
     print(prob_no,prob_name, "\nExtracting ......")
     contest_problem_url = contest_problem_url +  prob_no
     print(contest_problem_url, "is being parsed .....")
@@ -76,17 +111,18 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     fname.write(template_txt)
     fname.close()
 
-    file2 = prob_no + ".txt"
-    file2 = os.path.join(prob_folder_name,file2)
-    fname = open(file2, "a")
-    fname.write("Hello")
+    print("\n\nTime to get the i/o for {} {}".format(prob_no,prob_name))
+    time.sleep(3)
+    get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id)
+    print("\n I/O extraction a Success !")
+    # page = requests.get(contest_problem_url, verify = True)
+
+    #create the input.txt file for personal input output
+    file3 = "input.txt"
+    file3 = os.path.join(prob_folder_name,file3)
+    fname = open(file3,"a")
     fname.close()
 
-    
-
-
-
-    # page = requests.get(contest_problem_url, verify = True)
 
 
 
@@ -178,7 +214,7 @@ for i in range(len(problems)):
     txt = problems[i].text.strip()
     prob_no = problems[i].text.strip()
     prob_name = problems[i+1].text.strip()
-    create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt)
+    create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
 
 
 standings_row_extraction(contest_name,folder_name)
