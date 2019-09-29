@@ -1,5 +1,6 @@
 # Built by greenindia - Sabuj Jana - Jadavpur University 
 # www.janasabuj.github.io
+# 28-29 Sept 2019
 import os
 import sys
 import requests
@@ -11,23 +12,7 @@ from matplotlib import pyplot as plt
 
 parent_path = os.getcwd()
 illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
-
-#Function to generate the extension of the solution file according to the language preffered by the user
-def get_extension():
-    language = input('\nWhat is the language of your choice? \n1-C++ \n2-C \n3-Python \n4-Java \n5-Kotlin \n6-Javascript \n7-PHP \n8-Ruby \nEnter your choice: ')
-    hash = {
-        1 : '.cpp',
-        2 : '.c',
-        3 : '.py',
-        4 : '.java',
-        5 : '.kt',
-        6 : '.js',
-        7 : '.php',
-        8 : '.rb'
-    }
-    return hash[int(language)]
-    
-
+  
 contest_url = 'https://codeforces.com/contest/'
 contest_id =  input('Enter the contest id: ') #ask-for-id
 extension = get_extension() #ask-for-lang and get-ext
@@ -41,10 +26,24 @@ if(page.status_code != 200):
 else:
     print("Contest page parsing has started !!!!")
 soup = BeautifulSoup(page.text, 'html.parser') #page.text contains the html or the page source
-
 contest_problem_url = 'https://codeforces.com/contest/{}/problem/'.format(contest_id)
 
-# get the png plot
+#f Function to generate the extension of the solution file according to the language preffered by the user
+def get_extension():
+    language = input('\nWhat is the language of your choice? \n1-C++ \n2-C \n3-Python \n4-Java \n5-Kotlin \n6-Javascript \n7-PHP \n8-Ruby \nEnter your choice: ')
+    hash = {
+        1 : '.cpp',
+        2 : '.c',
+        3 : '.py',
+        4 : '.java',
+        5 : '.kt',
+        6 : '.js',
+        7 : '.php',
+        8 : '.rb'
+    }
+    return hash[int(language)]
+
+#f get the png plot
 def get_matplotlib_png(prob_x, acc_y,folder_name):
     plt.plot(prob_x,acc_y, color='r', marker='o', label='Success rate')
     plt.title('Problem VS Acceptance Rate')
@@ -54,7 +53,7 @@ def get_matplotlib_png(prob_x, acc_y,folder_name):
     pic_path = os.path.join(folder_name,"stats.png")
     plt.savefig(pic_path)
 
-# Extract i/o statements for the problem 
+#f Extract i/o statements for the problem 
 def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id):
     file2 = prob_no + ".txt"
     file2 = os.path.join(prob_folder_name,file2)
@@ -82,7 +81,7 @@ def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contes
     fname.write(txt)
     fname.close()    
 
-# Create problem folders 
+#f Create problem folders 
 def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id):
     print(prob_no,prob_name, "\nExtracting ......")
     contest_problem_url = contest_problem_url +  prob_no
@@ -117,15 +116,14 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     print("Done . Rest for 5s. Move on......\n\n")
     time.sleep(5)
 
-
-#Function to get the folder_name 
+#f Function to get the folder_name 
 def get_folder_name(contest_name):
     folder_name = os.path.join(parent_path,contest_name)
     for str_char in illegal:
         folder_name = folder_name[0:10] + folder_name[10:].replace(str_char," ")
     return folder_name
 
-#Function to make the stats.txt file 
+#f Function to make the stats.txt file 
 def make_stats_file(stats_text,folder_name,prob_x, acc_y):
     stats_file = os.path.join(folder_name,"stats.txt")
     fname = open(stats_file, "a")
@@ -135,7 +133,7 @@ def make_stats_file(stats_text,folder_name,prob_x, acc_y):
     get_matplotlib_png(prob_x, acc_y,folder_name)
     print("\n\n-----The end---------")
 
-#Function to extract the standing row 
+#f Function to extract the standing row 
 def standings_row_extraction(contest_name, folder_name,prob_x):
     #First extract the stats of the contest from the standings page
     page_stats = requests.get(contest_url + '/standings' , verify = True)
