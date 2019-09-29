@@ -36,8 +36,6 @@ A Codeforces parser for a specific contest identified by **contest-id**. Can be 
 ![1](https://user-images.githubusercontent.com/39147514/65833571-5f925f00-e2ef-11e9-9387-bec6c396ab20.png)
 
 # Starter code to be placed in template.txt (I have used my personal template in repo)
-> #include <iostream>
-> using namespace std;
 
 ```
  int main() {
