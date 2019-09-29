@@ -11,8 +11,9 @@ from bs4 import BeautifulSoup
 parent_path = os.getcwd()
 illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
 
+#Function to generate the extension of the solution file according to the language preffered by the user
 def get_extension():
-    language = input('What is the language of your choice? \n1-C++ \n2-C \n3-Python \n4-Java \n5-Kotlin \n6-Javascript \n7-PHP \n8-Ruby \nEnter your choice: ')
+    language = input('\nWhat is the language of your choice? \n1-C++ \n2-C \n3-Python \n4-Java \n5-Kotlin \n6-Javascript \n7-PHP \n8-Ruby \nEnter your choice: ')
     hash = {
         1 : '.cpp',
         2 : '.c',
@@ -28,24 +29,19 @@ def get_extension():
 
 contest_url = 'https://codeforces.com/contest/'
 contest_id =  input('Enter the contest id: ') #ask-for-id
-
-extension = get_extension()
-
+extension = get_extension() #ask-for-lang and get-ext
 
 
 contest_url = contest_url + contest_id
 print(contest_url)
 page = requests.get(contest_url, verify = True)
-# print(page.status_code)
 if(page.status_code != 200):
     print("Failed to retrive contest {}!!!!".format(contest_id))
     exit(1)
 else:
     print("Contest page parsing has started !!!!")
-# print(page.text)
-# Note- page.text contains the html or the page source
-soup = BeautifulSoup(page.text, 'html.parser')
-# print(soup.prettify())
+soup = BeautifulSoup(page.text, 'html.parser') #page.text contains the html or the page source
+
 
 
 
@@ -57,26 +53,26 @@ def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contes
     file2 = prob_no + ".txt"
     file2 = os.path.join(prob_folder_name,file2)
     fname = open(file2, "a")
-    fname.write("I/O statements for {} {} \n".format(prob_no,prob_name))
-    # fname.close()
-    url = 'https://codeforces.com/contest/{}/problem/{}'.format(contest_id,prob_no)
-    page = requests.get(url)
-    soup = BeautifulSoup(page.text, 'html.parser')
     
 
-    inp = soup.findAll('div', attrs={"class" : "input"})
-    # print(inp)
+    url = 'https://codeforces.com/contest/{}/problem/{}'.format(contest_id,prob_no)
+    page = requests.get(url, verify = True)
+    soup = BeautifulSoup(page.text, 'html.parser')
+    fname.write("Problem URL: " + url)
 
+    inp = soup.findAll('div', attrs={"class" : "input"})
     out = soup.findAll('div', attrs={"class" : "output"})
-    # print(out)
 
     txt = ""
     for i in range(len(inp)):
         x = inp[i].text
         y = out[i].text
+        txt = txt + "\n---------------------------------------------------"
         txt = txt + "\n" + x + "\n" + y
+        txt = txt + "---------------------------------------------------"
 
     # print(txt)
+    fname.write("\nI/O statements for {} {} \n".format(prob_no,prob_name))
     fname.write(txt)
     fname.close()
 
@@ -103,7 +99,7 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     print("Problem {} folder created".format(prob_no))
 
 
-    time.sleep(5)
+    
 
     file1 = prob_no + extension
     file1 = os.path.join(prob_folder_name,file1)
@@ -111,10 +107,10 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     fname.write(template_txt)
     fname.close()
 
-    print("\n\nTime to get the i/o for {} {}".format(prob_no,prob_name))
+    print("\nTime to get the i/o for {} {}".format(prob_no,prob_name))
     time.sleep(3)
     get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id)
-    print("\n I/O extraction a Success !")
+    print("I/O extraction a Success !")
     # page = requests.get(contest_problem_url, verify = True)
 
     #create the input.txt file for personal input output
@@ -122,6 +118,9 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     file3 = os.path.join(prob_folder_name,file3)
     fname = open(file3,"a")
     fname.close()
+
+    print("Done . Rest for 5s. Move on......\n\n")
+    time.sleep(5)
 
 
 
@@ -139,8 +138,8 @@ def make_stats_file(stats_text,folder_name):
     fname = open(stats_file, "a")
     fname.write(stats_text)
     fname.close()
-    print("Stats.txt created. Sleeping for 5 seconds :)")
-    time.sleep(5)
+    print("Stats.txt created.")
+    print("\n\n-----The end---------")
 
 #Function to extract the standing row - 2
 def standings_row_extraction(contest_name, folder_name):
@@ -179,9 +178,11 @@ def standings_row_extraction(contest_name, folder_name):
         stats_text = stats_text + temp_text
     make_stats_file(stats_text, folder_name)
     
-##############MAIN##############
+
+
+
+#---------------MAIN----------------------#
 #Extract the contest-details
-# print(soup.prettify())
 tables = soup.findAll('table')
 # print(tables)
 # print(len(tables)) - 6
@@ -209,7 +210,7 @@ fname.close()
 os.mkdir(folder_name)
 
 
-print("\n\n The problems will be parsed. Hold your horses for 3 secs!!!!")
+print("\n\nThe problems will be parsed. Hold your horses for 3 secs!!!!")
 time.sleep(3)
 
 
@@ -220,7 +221,7 @@ for i in range(len(problems)):
     txt = problems[i].text.strip()
     prob_no = problems[i].text.strip()
     prob_name = problems[i+1].text.strip()
-    # create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
+    create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
 
 
 standings_row_extraction(contest_name,folder_name)
