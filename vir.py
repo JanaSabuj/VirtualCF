@@ -44,16 +44,17 @@ soup = BeautifulSoup(page.text, 'html.parser') #page.text contains the html or t
 
 contest_problem_url = 'https://codeforces.com/contest/{}/problem/'.format(contest_id)
 
-#get the png plot
+# get the png plot
 def get_matplotlib_png(prob_x, acc_y,folder_name):
-    plt.plot(prob_x,acc_y, color='r', marker='o')
+    plt.plot(prob_x,acc_y, color='r', marker='o', label='Success rate')
     plt.title('Problem VS Acceptance Rate')
     plt.xlabel('Problem')
     plt.ylabel('Acceptance')
+    plt.legend()
     pic_path = os.path.join(folder_name,"stats.png")
     plt.savefig(pic_path)
 
-# Extract i/o statements for the problem -4
+# Extract i/o statements for the problem 
 def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id):
     file2 = prob_no + ".txt"
     file2 = os.path.join(prob_folder_name,file2)
@@ -81,7 +82,7 @@ def get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contes
     fname.write(txt)
     fname.close()    
 
-#Create problem folders - 3
+# Create problem folders 
 def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id):
     print(prob_no,prob_name, "\nExtracting ......")
     contest_problem_url = contest_problem_url +  prob_no
@@ -103,7 +104,7 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     fname.close()
 
     print("\nTime to get the i/o for {} {}".format(prob_no,prob_name))
-    time.sleep(3)
+    
     get_contest_io(contest_problem_url,prob_folder_name,prob_no,prob_name,contest_id)
     print("I/O extraction a Success !")
 
@@ -117,14 +118,14 @@ def create_problem_folder(prob_no, prob_name,contest_problem_url,folder_name,ext
     time.sleep(5)
 
 
-#Function to get the folder_name - 1
+#Function to get the folder_name 
 def get_folder_name(contest_name):
     folder_name = os.path.join(parent_path,contest_name)
     for str_char in illegal:
         folder_name = folder_name[0:10] + folder_name[10:].replace(str_char," ")
     return folder_name
 
-#Function to make the stats.txt file - 2A
+#Function to make the stats.txt file 
 def make_stats_file(stats_text,folder_name,prob_x, acc_y):
     stats_file = os.path.join(folder_name,"stats.txt")
     fname = open(stats_file, "a")
@@ -134,7 +135,7 @@ def make_stats_file(stats_text,folder_name,prob_x, acc_y):
     get_matplotlib_png(prob_x, acc_y,folder_name)
     print("\n\n-----The end---------")
 
-#Function to extract the standing row - 2
+#Function to extract the standing row 
 def standings_row_extraction(contest_name, folder_name,prob_x):
     #First extract the stats of the contest from the standings page
     page_stats = requests.get(contest_url + '/standings' , verify = True)
@@ -175,7 +176,7 @@ def standings_row_extraction(contest_name, folder_name,prob_x):
     make_stats_file(stats_text, folder_name,prob_x,acc_y)
     
 
-#---------------MAIN----------------------#
+#---------------------------------MAIN---------------------------------------------#
 #Extract the contest-details
 tables = soup.findAll('table')
 contest_name = tables[0].find('a').text.strip()
@@ -208,6 +209,6 @@ for i in range(len(problems)):
     prob_x.append(prob_no)
     # create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
 
-#Get the stats-txt file
+# Get the stats-txt file
 standings_row_extraction(contest_name,folder_name,prob_x)
 
