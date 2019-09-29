@@ -12,6 +12,21 @@ from matplotlib import pyplot as plt
 
 parent_path = os.getcwd()
 illegal = ["<", ">", "[", "]",  "?", ":", "*" , "|"]
+
+#f Function to generate the extension of the solution file according to the language preffered by the user
+def get_extension():
+    language = input('\nWhat is the language of your choice? \n1-C++ \n2-C \n3-Python \n4-Java \n5-Kotlin \n6-Javascript \n7-PHP \n8-Ruby \nEnter your choice: ')
+    hash = {
+        1 : '.cpp',
+        2 : '.c',
+        3 : '.py',
+        4 : '.java',
+        5 : '.kt',
+        6 : '.js',
+        7 : '.php',
+        8 : '.rb'
+    }
+    return hash[int(language)]
   
 contest_url = 'https://codeforces.com/contest/'
 contest_id =  input('Enter the contest id: ') #ask-for-id
@@ -28,20 +43,7 @@ else:
 soup = BeautifulSoup(page.text, 'html.parser') #page.text contains the html or the page source
 contest_problem_url = 'https://codeforces.com/contest/{}/problem/'.format(contest_id)
 
-#f Function to generate the extension of the solution file according to the language preffered by the user
-def get_extension():
-    language = input('\nWhat is the language of your choice? \n1-C++ \n2-C \n3-Python \n4-Java \n5-Kotlin \n6-Javascript \n7-PHP \n8-Ruby \nEnter your choice: ')
-    hash = {
-        1 : '.cpp',
-        2 : '.c',
-        3 : '.py',
-        4 : '.java',
-        5 : '.kt',
-        6 : '.js',
-        7 : '.php',
-        8 : '.rb'
-    }
-    return hash[int(language)]
+
 
 #f get the png plot
 def get_matplotlib_png(prob_x, acc_y,folder_name):
@@ -205,7 +207,7 @@ for i in range(len(problems)):
     prob_no = problems[i].text.strip()
     prob_name = problems[i+1].text.strip()
     prob_x.append(prob_no)
-    # create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
+    create_problem_folder(prob_no,prob_name,contest_problem_url,folder_name,extension,template_txt,contest_id)
 
 # Get the stats-txt file
 standings_row_extraction(contest_name,folder_name,prob_x)
