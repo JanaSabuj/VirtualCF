@@ -30,7 +30,7 @@ A Codeforces parser for a specific contest identified by **contest-id**. Can be 
 * An active internet connection while the script parses     
 
 # Youtube demo
-<!-- [My first youtube tutorial](https://youtu.be/bci2ogajpFI) -->
+[My Youtube tutorial](https://youtu.be/9UNwuovxQm4)
 
 # The contest we want to participate in
 ![1](https://user-images.githubusercontent.com/39147514/65833571-5f925f00-e2ef-11e9-9387-bec6c396ab20.png)
