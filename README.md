@@ -22,7 +22,8 @@ A Codeforces parser for a specific contest identified by **contest-id**. Can be 
 * Star the repo and clone it.
 * Download all the files in a zip 
 * Install latest version of python (add to PATH) if not already installed
-* **Pip install** all the **below mentioned modules** and dependencies
+* **Pip install** all the **below mentioned modules** and dependencies 
+> Edit: Make sure **python3** is installed. **pip3** will be more favourable after reports from various users.
 * Place the script in a folder where you want the folder of the contest
 * Place your code template inside the **template.txt** file
 * Run **python3 vir.py** or **python vir.py** as suitable
